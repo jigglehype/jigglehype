@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jiggle Physics - $JIGGLE</title
+<link rel="icon" type="image/x-icon" href="jigglefavicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    /* --- Animation Keyframes --- */
+    @keyframes sparkle {
+      0%, 100% { filter: drop-shadow(0 0 5px hotpink); }
+      50% { filter: drop-shadow(0 0 20px white); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      50% { transform: translateX(3px); }
+      75% { transform: translateX(-2px); }
+    }
+
+    @keyframes floatWiggle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes jiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      75% { transform: rotate(-2deg); }
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #ff69b4; }
+    }
+
+    @keyframes shine {
+      0% { left: -75%; }
+      100% { left: 125%; }
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.1); opacity: 1; }
+      80% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px hotpink; }
+      50% { box-shadow: 0 0 20px deeppink; }
+      100% { box-shadow: 0 0 10px hotpink; }
+    }
+
+    @keyframes floatAround {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      50% { transform: translate(50vw, -30vh) rotate(180deg) scale(1.2); }
+      90% { opacity: 1; }
+      100% { transform: translate(100vw, 0) rotate(360deg) scale(1); opacity: 0; }
+    }
+
+    /* --- General Styles --- */
+    body {
+      margin: 0;
+      background: url('jigbck.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Bangers', cursive;
+      color: white;
+      overflow: hidden;
+    }
+
+    .title-banner {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 2em;
+      color: #ffccff;
+      text-shadow: 2px 2px #000;
+    }
+
+    h1 {
+      font-size: 6em;
+      margin: 0 0 20px;
+      text-shadow: 2px 2px #000;
+    }
+
+    h1:hover {
+      animation: jiggle 0.3s ease infinite;
+    }
+
+    .tagline {
+      font-size: 2em;
+      color: #ffccff;
+      margin-bottom: 30px;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: .15em solid #ff69b4;
+      width: 0;
+      animation: typing 3s steps(30, end) forwards, blink-caret .75s step-end infinite;
+    }
+
+    .overlay {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 60px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 40px rgba(255, 105, 180, 0.4);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .jiggle-btn {
+      padding: 20px 50px;
+      font-size: 1.5em;
+      font-family: 'Orbitron', sans-serif;
+      background: hotpink;
+      border: none;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 20px hotpink;
+      transition: all 0.2s ease-in-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .jiggle-btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: rgba(255,255,255,0.4);
+      transform: skewX(-20deg);
+      animation: shine 3s infinite;
+    }
+
+    .jiggle-btn:hover {
+      transform: scale(1.1);
+      background: deeppink;
+      box-shadow: 0 0 30px deeppink;
+    }
+
+    .jigglenomics-link {
+      display: block;
+      margin-top: 30px;
+      color: #ffccff;
+      text-decoration: underline;
+      font-size: 1.4em;
+    }
+
+    .powered {
+      font-size: 1em;
+      color: #ccc;
+      margin-top: 10px;
+      text-shadow: 1px 1px #000;
+    }
+
+    .connect-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: hotpink;
+      border: none;
+      color: white;
+      font-size: 1.2em;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      animation: pulse 2s infinite;
+    }
+
+    .countdown-title {
+  position: absolute;
+  bottom: 250px;
+  left: 110px;
+  font-size: 2.4em;
+  font-family: 'Orbitron', monospace;
+  color: #39ff14;
+  text-shadow: 0 0 15px #39ff14;
+}
+
+.countdown {
+  position: absolute;
+  bottom: 100px;
+  left: 30px;
+  background: linear-gradient(145deg, #111, #222);
+  padding: 30px 40px;
+  border-radius: 15px;
+  font-family: 'Orbitron', monospace;
+  font-size: 2.6em;
+  color: #39ff14;
+  text-align: center;
+  box-shadow: 0 0 25px #39ff14;
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: box-shadow 0.3s ease;
+}
+
+.countdown:hover {
+  box-shadow: 0 0 40px #39ff14, 0 0 10px #00ffcc inset;
+}
+
+
+    .poll-box {
+      position: absolute;
+      bottom: 200px;
+      right: 40px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      width: 440px;
+      text-align: center;
+      box-shadow: 0 0 15px deeppink;
+    }
+
+    .poll-btn {
+      font-family: 'Orbitron', sans-serif;
+      background: hotpink;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin: 5px;
+      width: 140px;
+      font-size: 1.2em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .poll-btn:hover {
+      background: deeppink;
+    }
+
+    #mute-button {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: hotpink;
+      border: none;
+      color: white;
+      font-size: 1.1em;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 0 10px hotpink;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: #aaa;
+      font-size: 1.6em;
+      text-shadow: 1px 1px #000;
+    }
+
+    .champagne-section {
+  position: absolute;
+  bottom: 50px;
+  right: 200px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      animation: bounceIn 1s ease;
+    }
+
+    .champagne-section img {
+      animation: floatWiggle 4s infinite ease-in-out;
+    }
+
+    .key-img {
+      width: 150px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .key-img:hover {
+      transform: scale(1.1);
+    }
+
+    .flying-gif {
+      position: absolute;
+      top: 50%;
+      left: -200px;
+      width: 160px;
+      animation: floatAround 12s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <audio id="bg-audio" autoplay loop>
+    <source src="jig/loop.mp3" type="audio/mpeg" />
+  </audio>
+  <button id="mute-button">🔊</button>
+
+  <div class="title-banner">Jiggle Physics</div>
+
+  <div class="overlay">
+    <h1>$JIGGLE</h1>
+    <div class="tagline">Booty-Strapped Liquidity</div>
+    <button class="jiggle-btn">Buy on HyperSwap</button>
+    <a href="jigglenomics.html" class="jigglenomics-link">Read the Jigglenomics</a>
+    <div class="powered">Powered by HyperliquidEVM</div>
+  </div>
+
+  <!-- Flying GIFs -->
+ <script>
+  const totalGifs = 7;
+  const spawnInterval = 1500; // milliseconds between gifs
+  const gifDuration = 10000; // match CSS animation time
+
+  function spawnJiggleGif() {
+    const img = document.createElement('img');
+    const gifNumber = Math.floor(Math.random() * totalGifs) + 1;
+    img.src = `jiggle${gifNumber}.gif`;
+    img.className = 'flying-gif';
+    img.style.top = `${Math.random() * 85 + 5}%`;
+    img.style.animationDuration = `${gifDuration / 1000}s`;
+    img.style.pointerEvents = 'none';
+
+    document.body.appendChild(img);
+
+    setTimeout(() => img.remove(), gifDuration);
+  }
+
+  setInterval(spawnJiggleGif, spawnInterval);
+</script>
+
+<!-- Second YouTube Video (above poll) -->
+<div style="position: absolute; bottom: 480px; right: 75px;">
+  <iframe width="420" height="235"
+    src="https://www.youtube.com/embed/3a9MrHfx3tk?si=afsCWv0JhZoErzEi"
+    title="YouTube video player" frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen
+    style="border-radius: 12px; box-shadow: 0 0 25px hotpink;">
+  </iframe>
+</div>
+
+  <div class="poll-box">
+    <div style="margin-bottom:10px; font-size: 2.4em;">Tits or Ass?</div>
+    <button class="poll-btn" onclick="vote('tits')">Tits</button>
+    <button class="poll-btn" onclick="vote('ass')">Ass</button>
+    <div id="poll-results" style="margin-top: 20px; text-align: left; padding: 0 20px; font-size: 1.2em;"></div>
+  </div>
+
+  <!-- Champagne Key -->
+  <div class="champagne-section">
+    <img src="charoom.png" class="key-img" onclick="document.getElementById('popup').style.display='block'" />
+  </div>
+
+  <div id="popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.85); padding:40px; border-radius:20px; box-shadow:0 0 20px hotpink; z-index:1000; text-align:center; font-family:'Bangers', cursive; font-size:1.5em; color:white;">
+    You must own a minimum of 2.5M $JIGGLE to enter the Champagne Room.<br><br>
+    <button style="font-family:'Orbitron',sans-serif; background:hotpink; color:white; border:none; padding:10px 20px; font-size:1em; border-radius:8px; cursor:pointer;" onclick="alert('Verifying ownership...')">Verify</button><br><br>
+    <button style="background:none; border:none; color:#ccc; font-size:0.8em; cursor:pointer;" onclick="document.getElementById('popup').style.display='none'">Close</button>
+  </div>
+
+  <div style="position:absolute; bottom:340px; left:75px;">
+    <iframe width="420" height="235" src="https://www.youtube.com/embed/yAi0MYo5Mzw?si=qVGZ9AMDvAvMuELm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 12px; box-shadow: 0 0 25px hotpink;"></iframe>
+  </div>
+
+  <div class="countdown-title">GTA6 Launch In:</div>
+  <div class="countdown" onclick="window.open('https://www.rockstargames.com/gta6', '_blank')">
+    <span id="countdown-timer"></span>
+  </div>
+
+  <button class="connect-btn">X.com</button>
+  <div class="footer">The unofficial, unofficial coin of Grand Theft Auto 6</div>
+
+  <script>
+    // Mute Button
+    (() => {
+      const bgAudio = document.getElementById('bg-audio');
+      const muteBtn = document.getElementById('mute-button');
+      muteBtn.addEventListener('click', () => {
+        bgAudio.muted = !bgAudio.muted;
+        muteBtn.textContent = bgAudio.muted ? '🔇' : '🔊';
+      });
+    })();
+
+    // Countdown
+    (() => {
+      const countdown = document.getElementById('countdown-timer');
+      const launchDate = new Date('May 26, 2026 00:00:00').getTime();
+      setInterval(() => {
+        const now = new Date().getTime();
+        const distance = launchDate - now;
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    })();
+
+    // Poll
+    if (typeof votes === 'undefined') {
+      var votes = { tits: 0, ass: 0 };
+    }
+    function vote(choice) {
+      votes[choice]++;
+      const total = votes.tits + votes.ass;
+      const titsPercent = ((votes.tits / total) * 100).toFixed(1);
+      const assPercent = ((votes.ass / total) * 100).toFixed(1);
+      document.getElementById('poll-results').innerHTML =
+        `<div style='margin-bottom: 10px;'>
+          <div>Tits: ${titsPercent}%</div>
+          <div style='background:white;width:100%;height:10px;border-radius:5px;margin-bottom:10px;'>
+            <div style='background:#ff69b4;width:${titsPercent}%;height:100%;border-radius:5px;'></div>
+          </div>
+          <div>Ass: ${assPercent}%</div>
+          <div style='background:white;width:100%;height:10px;border-radius:5px;'>
+            <div style='background:#ff69b4;width:${assPercent}%;height:100%;border-radius:5px;'></div>
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
